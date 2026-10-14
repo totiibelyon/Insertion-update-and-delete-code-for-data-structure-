@@ -1,0 +1,117 @@
+#include <stdio.h>
+#define MAX 5
+
+int queue[MAX];
+int front = -1, rear = -1;
+
+// Basic Enqueue / Dequeue (your cleaned code)
+void enqueue(int x){
+    if(rear == MAX-1){
+        printf("Queue Full\n");
+    } else {
+        if(front==-1) front=0;
+        queue[++rear] = x;
+    }
+}
+
+int dequeue(){
+    if(front==-1 || front>rear){
+        printf("Q is empty\n");
+        front=rear=-1;
+        return -1;
+    } else {
+        int x = queue[front];
+        printf("%d has been dequeued\n", x);
+        front++;
+        if(front>rear) front=rear=-1;
+        return x;
+    }
+}
+
+// ASSIGNMENT 1: Deleting an element that is already in Queue ==========
+void deleteByValue(int value){
+    if(front==-1){
+        printf("Queue empty\n");
+        return;
+    }
+    int i, j, found=0;
+    for(i=front; i<=rear; i++){
+        if(queue[i]==value){
+            found=1;
+            // Shift elements left
+            for(j=i; j<rear; j++){
+                queue[j] = queue[j+1];
+            }
+            rear--;
+            if(front>rear) front=rear=-1;
+            printf("%d deleted from queue\n", value);
+            break;
+        }
+    }
+    if(!found) printf("%d not found in queue\n", value);
+}
+
+//  ASSIGNMENT 2: Insertion at any position ==========
+void insertAtPosition(int pos, int value){
+    // pos = 0 means front
+    if(rear == MAX-1){
+        printf("Queue Full, cannot insert\n");
+        return;
+    }
+    if(pos < 0 || pos > (rear-front+1)){
+        printf("Invalid position\n");
+        return;
+    }
+    // Shift right to make space
+    for(int i=rear; i>=front+pos; i--){
+        queue[i+1] = queue[i];
+    }
+    queue[front+pos] = value;
+    rear++;
+    if(front==-1) front=0;
+    printf("%d inserted at position %d\n", value, pos);
+}
+
+//  ASSIGNMENT 3: Update ==========
+void update(int pos, int newValue){
+    if(front==-1){
+        printf("Queue empty\n");
+        return;
+    }
+    if(pos < 0 || pos > rear-front){
+        printf("Invalid position\n");
+        return;
+    }
+    int old = queue[front+pos];
+    queue[front+pos] = newValue;
+    printf("Updated position %d: %d -> %d\n", pos, old, newValue);
+}
+
+void display(){
+    if(front==-1) { printf("Queue Empty\n"); return; }
+    printf("Queue: ");
+    for(int i=front; i<=rear; i++) printf("%d ", queue[i]);
+    printf("\n");
+}
+
+int main(){
+    enqueue(10);
+    enqueue(20);
+    enqueue(30);
+    enqueue(40);
+    display(); // 10 20 30 40
+
+    // 1. Delete element already in queue
+    deleteByValue(30);
+    display(); // 10 20 40
+
+    // 2. Insertion
+    insertAtPosition(1, 25);
+    display(); // 10 25 20 40
+
+    // 3. Update
+    update(2, 99);
+    display(); // 10 25 99 40
+
+    return 0;
+}
